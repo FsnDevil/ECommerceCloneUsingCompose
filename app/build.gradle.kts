@@ -72,6 +72,9 @@ dependencies {
 
     //Start Adding New Dependencies
 
+    //Added for Search bar
+    implementation("androidx.compose.material3:material3:1.1.2")
+
     //For using collect as lifecycle
     implementation("androidx.compose.runtime:runtime-livedata:1.7.2")
 

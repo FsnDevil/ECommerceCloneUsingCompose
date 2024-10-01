@@ -6,8 +6,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -23,7 +25,8 @@ private const val TAG = "HomeScreen"
 fun HomeScreen(productItemClicked: (ProductItem) -> Unit) {
 
     val productViewModel: ProductViewModel = hiltViewModel()
-    val productList = productViewModel.productList.collectAsStateWithLifecycle()
+
+    val filteredProductList = productViewModel.filteredProductList.collectAsStateWithLifecycle()
     val productListError = productViewModel.productListError.collectAsStateWithLifecycle()
     val isLoading = productViewModel.isLoading.collectAsStateWithLifecycle()
 
@@ -35,9 +38,11 @@ fun HomeScreen(productItemClicked: (ProductItem) -> Unit) {
         mutableStateOf(false)
     }
 
-    ProductList(productList.value, onAddToCartClicked = {
-
-    }, productItemClicked)
+    ProductList(filteredProductList.value, onAddToCartClicked = {
+        // Handle Add to Cart
+    }, productItemClicked, onTextChanged = { searchQuery ->
+        productViewModel.updateSearchQuery(searchQuery)
+    })
 
     LaunchedEffect(key1 = productListError.value) {
         if (productListError.value.isNotEmpty()) {
@@ -47,8 +52,8 @@ fun HomeScreen(productItemClicked: (ProductItem) -> Unit) {
     }
 
     if (productListErrorCompose.value.isNotEmpty()) {
-        ShowErrorMessage(errorMessage = productListErrorCompose.value ) {
-            productListErrorCompose.value=""
+        ShowErrorMessage(errorMessage = productListErrorCompose.value) {
+            productListErrorCompose.value = ""
         }
     }
 

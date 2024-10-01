@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.example.ecommerceclone.ui.components
 
 import androidx.compose.animation.core.LinearEasing
@@ -12,34 +14,49 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
@@ -47,6 +64,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -61,6 +79,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
@@ -92,7 +111,7 @@ fun TextFieldComponent(
             fontSize = 14.sp,
             color = Color.DarkGray,
             fontWeight = FontWeight.Normal,
-            fontFamily = FontFamily(Font(com.example.ecommerceclone.R.font.susemedium))
+            fontFamily = FontFamily(Font(R.font.susemedium))
         ),
         isError = !errorStatus,
         colors = TextFieldDefaults.outlinedTextFieldColors(
@@ -115,7 +134,6 @@ fun TextFieldComponent(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PasswordTextFieldComponent(
     labelValue: String,
@@ -149,7 +167,7 @@ fun PasswordTextFieldComponent(
             fontSize = 14.sp,
             color = Color.DarkGray,
             fontWeight = FontWeight.Normal,
-            fontFamily = FontFamily(Font(com.example.ecommerceclone.R.font.susemedium))
+            fontFamily = FontFamily(Font(R.font.susemedium))
         ),
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Password,
@@ -202,7 +220,7 @@ fun UnderLinedTextComponent(value: String) {
             fontSize = 16.sp,
             fontWeight = FontWeight.Normal,
             fontStyle = FontStyle.Normal,
-            fontFamily = FontFamily(Font(com.example.ecommerceclone.R.font.susemedium))
+            fontFamily = FontFamily(Font(R.font.susemedium))
         ), color = Color.DarkGray,
         textAlign = TextAlign.Center,
         textDecoration = TextDecoration.Underline
@@ -302,7 +320,12 @@ fun RotatingLoader(isVisible: Boolean) {
     val rotation by infiniteTransition.animateFloat(
         initialValue = 0f,
         targetValue = 360f,
-        animationSpec = infiniteRepeatable(animation = tween(durationMillis = 1000, easing = LinearEasing)),
+        animationSpec = infiniteRepeatable(
+            animation = tween(
+                durationMillis = 1000,
+                easing = LinearEasing
+            )
+        ),
         label = ""
     )
 
@@ -322,4 +345,71 @@ fun RotatingLoader(isVisible: Boolean) {
             )
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ToolbarForApp(title: String, onTextChanged: (String) -> Unit) {
+
+
+    TopAppBar(
+        title = { Text(title) },
+        actions = {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth() // Stretch the Row across the entire width
+                    .weight(1f) // Allocate all available weight to the Row
+            ) {
+
+                var searchText by remember {
+                    mutableStateOf("")
+                }
+
+                var active by remember {
+                    mutableStateOf(false)
+                }
+
+                SearchBar(
+                    trailingIcon = {
+                        IconButton(onClick = { onTextChanged(searchText) }) {
+                            Icon(
+                                imageVector = Icons.Filled.Search,
+                                contentDescription = "Search Product"
+                            )
+                        }
+                    },
+                    query = searchText,  // Update the query directly with searchText
+                    onQueryChange = { newText ->  // Update searchText and call the callback
+                        searchText = newText
+                    },
+                    onSearch = {
+                        active = false
+                    },
+                    onActiveChange = {
+                        active = it
+                    },
+                    active = false,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp)// Stretch the SearchBar within the Row
+                        .weight(0.9f) // Allocate 90% of the Row's width to the SearchBar
+                        .padding(start = 10.dp)
+                ) {
+
+                }
+                IconButton(
+                    onClick = {  },
+                    modifier = Modifier
+                        .weight(0.1f)
+                        .align(CenterVertically) // Allocate 10% of the Row's width to the Settings icon
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Settings,
+                        contentDescription = "Settings"
+                    )
+                }
+            }
+        }
+    )
 }

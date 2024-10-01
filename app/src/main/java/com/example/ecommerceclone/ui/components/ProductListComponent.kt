@@ -40,14 +40,19 @@ import com.example.ecommerceclone.ui.theme.Typography
 
 @Composable
 fun ProductList(productList: List<ProductItem>,onAddToCartClicked: () -> Unit,
-                productItemClicked:(ProductItem)->Unit) {
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
-        contentPadding = PaddingValues(2.dp),
-        verticalArrangement = Arrangement.SpaceAround
-    ) {
-        items(productList) {
-            ProductItem(productItem = it, onAddToCartClicked , productItemClicked)
+                productItemClicked:(ProductItem)->Unit,onTextChanged:(String)->Unit) {
+    Column {
+        ToolbarForApp(title = "Product List"){
+            onTextChanged(it)
+        }
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            contentPadding = PaddingValues(2.dp),
+            verticalArrangement = Arrangement.SpaceAround
+        ) {
+            items(productList) {
+                ProductItem(productItem = it, onAddToCartClicked , productItemClicked)
+            }
         }
     }
 }
