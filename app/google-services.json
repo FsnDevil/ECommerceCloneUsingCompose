@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "75006793074",
+    "project_id": "ecommerceclone-d88d8",
+    "storage_bucket": "ecommerceclone-d88d8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:75006793074:android:bac87ba32c28434baf39eb",
+        "android_client_info": {
+          "package_name": "com.example.ecommerceclone"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDdhtsXAe2LKf9jhCcvWxrDSZxTL6ohL58"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
